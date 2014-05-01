@@ -22,7 +22,6 @@ public class Driver
 	//public static double error = 0;
 	public static double average;
 	public static double area;
-	public static double distance;
 	public static double prev_x;
 
 
@@ -109,8 +108,6 @@ public class Driver
 		{
 			agent.setAzimuthDeltaTarget(+1);
 		}
-		
-		distance = distance;	//TODO
 
 	}
 
@@ -124,7 +121,7 @@ public class Driver
 		try {
 			pw = new PrintWriter(new File("gnuoutput.txt"));
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 
@@ -144,6 +141,8 @@ public class Driver
 			doControllerPID(agent);
 
 			agent.update_();
+			
+			area += (agent.getX() - prev_x) * 2;
 
 			//System.out.println(agent.getStateGnuplot());
 
@@ -153,6 +152,7 @@ public class Driver
 		}
 		pw.close();
 		
-		System.out.println("Distance: " + distance);
+		System.out.println("Distance: " + agent.getX());
+		System.out.println("Area: " + area);
 	}
 }
