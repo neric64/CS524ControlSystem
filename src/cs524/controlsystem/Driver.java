@@ -22,7 +22,6 @@ public class Driver
 	public static double average;
 	public static double area;
 	public static double prev_x = 0;
-	public static double sum = 0;
 	public static double sd = 0;
 
 
@@ -109,8 +108,8 @@ public class Driver
 			agent.setAzimuthDeltaTarget(+1);
 		}
 		
-		sum += Math.abs(agent.getY());
-		//average += Math.abs(agent.getY());
+		sd += Math.abs(agent.getY() * agent.getY());
+		average += Math.abs(agent.getY());
 
 	}
 
@@ -132,7 +131,7 @@ public class Driver
 		int iterationCount = 5000;
 
 		// this defines the agent at position (0,-20) with azimuth 45 degrees and speed 1, with instantaneous delta deflection 
-		Agent agent = new Agent(0, -20, 3, 10, false);
+		Agent agent = new Agent(-35, -35, 3, 45, false);
 
 		pw.println(agent.getStateGnuplot());
 
@@ -144,10 +143,6 @@ public class Driver
 
 			agent.update_();
 			
-			average = sum / (iIteration + 1);
-			
-			sd += (agent.getY() - average) * (agent.getY() - average);
-			
 			area += Math.abs((agent.getX() - prev_x) * agent.getY());
 
 			pw.println(agent.getStateGnuplot());
@@ -156,11 +151,15 @@ public class Driver
 		}
 		pw.close();
 		
+		average = average / iterationCount;
+		
+		sd = sd / iterationCount;
+		sd = sd - (average * average);
+		
 		System.out.println("Iteration Count: " + iterationCount);
 		System.out.println("Distance: " + agent.getX());
 		System.out.println("Area: " + area);
 		System.out.println("Average: " + average);
-		//System.out.println("Average: " + (average / iterationCount));
-		System.out.println("Standard Deviation: " + (Math.sqrt(sd / iterationCount)));
+		System.out.println("Standard Deviation: " + (Math.sqrt(sd)));
 	}
 }
