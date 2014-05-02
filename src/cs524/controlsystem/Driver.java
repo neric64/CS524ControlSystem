@@ -15,14 +15,15 @@ public class Driver
 	// ------------------------------------------------------------------------------------------------------------------------------
 
 	public static double P = -0.01;
-	public static double I = 0.00001;
+	public static double I = 0.000001;
 	public static double D = -0.3;
 	public static double prev_error = 0;
 	public static double integral = 0;
-	//public static double error = 0;
 	public static double average;
 	public static double area;
-	public static double prev_x;
+	public static double prev_x = 0;
+	public static double sum = 0;
+	public static double sd = 0;
 
 
 
@@ -89,7 +90,6 @@ public class Driver
 		
 		double targetY = 0;
 		double error = 0;
-		//double integral = 0;
 		double y = agent.getY();
 		double derivative;
 		double output;
@@ -108,6 +108,9 @@ public class Driver
 		{
 			agent.setAzimuthDeltaTarget(+1);
 		}
+		
+		sum += Math.abs(agent.getY());
+		//average += Math.abs(agent.getY());
 
 	}
 
@@ -129,9 +132,8 @@ public class Driver
 		int iterationCount = 5000;
 
 		// this defines the agent at position (0,-20) with azimuth 45 degrees and speed 1, with instantaneous delta deflection 
-		Agent agent = new Agent(0, -20, 1, 10, false);
+		Agent agent = new Agent(0, -20, 3, 10, false);
 
-		//System.out.println(agent.getStateGnuplot());
 		pw.println(agent.getStateGnuplot());
 
 		for (int iIteration = 0; iIteration < iterationCount; ++iIteration)
@@ -142,9 +144,11 @@ public class Driver
 
 			agent.update_();
 			
-			area += (agent.getX() - prev_x) * 2;
-
-			//System.out.println(agent.getStateGnuplot());
+			average = sum / (iIteration + 1);
+			
+			sd += (agent.getY() - average) * (agent.getY() - average);
+			
+			area += Math.abs((agent.getX() - prev_x) * agent.getY());
 
 			pw.println(agent.getStateGnuplot());
 
@@ -152,7 +156,11 @@ public class Driver
 		}
 		pw.close();
 		
+		System.out.println("Iteration Count: " + iterationCount);
 		System.out.println("Distance: " + agent.getX());
 		System.out.println("Area: " + area);
+		System.out.println("Average: " + average);
+		//System.out.println("Average: " + (average / iterationCount));
+		System.out.println("Standard Deviation: " + (Math.sqrt(sd / iterationCount)));
 	}
 }
